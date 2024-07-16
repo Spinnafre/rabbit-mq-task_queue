@@ -1,37 +1,37 @@
 export class UserAccountNotificationDTO {
-  #user_name;
-  #user_code;
-  #user_email;
-  #type;
-  #action;
+  #_name;
+  #_code;
+  #_to;
+  #_type;
+  #_action;
 
   constructor(params) {
-    const { code, email, name, type, action } = params;
+    const { code, to, name, type, action } = params;
 
-    this.#user_code = code;
-    this.#user_email = email;
-    this.#user_name = name;
-    this.#type = type;
-    this.#action = action;
+    this.#_code = code;
+    this.#_to = to;
+    this.#_name = name;
+    this.#_type = type;
+    this.#_action = action;
   }
 
-  get email() {
-    return this.#user_email;
+  get to() {
+    return this.#_to;
   }
 
   get code() {
-    return this.#user_code;
+    return this.#_code;
   }
 
   get name() {
-    return this.#user_name;
+    return this.#_name;
   }
 
   get user_type() {
-    return this.#type;
+    return this.#_type;
   }
   // create, forgot, delete
   get action() {
-    return this.#action;
+    return this.#_action;
   }
 }

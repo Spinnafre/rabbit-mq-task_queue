@@ -1,33 +1,33 @@
-export class SendUserAccountNotificationMail {
-  #sendMailService;
+import { getTemplate } from "../helpers/fetch_template.mjs";
 
-  constructor(sendMailService) {
-    this.#sendMailService = sendMailService;
+export class SendUserAccountNotificationMail {
+  #mailService;
+  #templateEngine;
+
+  constructor(mailService, templateEngine) {
+    this.#mailService = mailService;
+    this.#templateEngine = templateEngine;
   }
 
-  async execute(dto) {
+  async execute(request) {
     try {
-      const { email, code, name, user_type, action } = dto;
-      let html;
+      const { fileName, subject, props } = makeTemplateProps(
+        request.action,
+        request
+      );
 
-      switch (action) {
-        case "create": {
-          html = "create_account_template";
-          break;
-        }
-        case "forgot": {
-          html = "forgot_account_template";
-          break;
-        }
-        default:
-          throw new Error("HTML template not found");
-      }
+      const mailTemplateFile = await getTemplate(fileName);
 
-      await this.#sendMailService.send({
+      const html = await this.#templateEngine.compile({
+        file: mailTemplateFile,
+        args: props,
+      });
+
+      await this.#mailService.send({
         from: "test@gmail.com",
-        to: email,
+        to: request.to,
         html,
-        attachments: null,
+        subject,
       });
 
       return {
@@ -46,4 +46,50 @@ export class SendUserAccountNotificationMail {
       };
     }
   }
+}
+
+function makeCreateAccountProps(data) {
+  return {
+    confirmation_link: `http://localhost:8080/activate/${data.code}`,
+    name: data.name,
+    contact_url: "http://localhost:8080/supoort",
+  };
+}
+
+function makeForgotPasswordProps(data) {
+  return {
+    confirmation_link: `http://localhost:8080/activate/${data.code}`,
+    contact_url: "http://localhost:8080/supoort",
+  };
+}
+
+function makeTemplateProps(templateName, data) {
+  const fileName = `${templateName}.html`;
+
+  const result = {
+    fileName,
+    subject: null,
+    props: null,
+  };
+
+  switch (templateName) {
+    case "create_account": {
+      Object.assign(result, {
+        subject: "Create account",
+        props: makeCreateAccountProps(data),
+      });
+      break;
+    }
+    case "forgot_password": {
+      Object.assign(result, {
+        subject: "Forgot password",
+        props: makeForgotPasswordProps(data),
+      });
+      break;
+    }
+    default:
+      throw new Error("Fail to get template properties");
+  }
+
+  return result;
 }

@@ -1,8 +1,10 @@
 export class SendNewsletterMail {
-  #sendMailService;
+  #mailService;
+  #templateEngine;
 
-  constructor(sendMailService) {
-    this.#sendMailService = sendMailService;
+  constructor(mailService, templateEngine) {
+    this.#mailService = mailService;
+    this.#templateEngine = templateEngine;
   }
 
   async execute(dto) {
@@ -10,7 +12,7 @@ export class SendNewsletterMail {
       const { to, from } = dto;
       let html = "newsletter_template";
 
-      await this.#sendMailService.send({
+      await this.#mailService.send({
         from: "test@gmail.com",
         to,
         cc: "*0",

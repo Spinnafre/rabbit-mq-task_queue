@@ -22,7 +22,7 @@ export class Worker {
 
   async start() {
     try {
-      await this.#queueServiceProvider.start();
+      // await this.#queueServiceProvider.start();
 
       //This makes sure the queue is declared before attempting to consume from it
       await this.#queueServiceProvider.createOrConnectToExchange(

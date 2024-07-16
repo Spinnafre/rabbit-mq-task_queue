@@ -10,7 +10,10 @@ export class SendNewsletterWorker extends Worker {
         bind_key: "news",
       },
       consume_rate: 1,
-      exchange: "mailer.exchange",
+      exchange: {
+        name: "mailer.exchange",
+        type: "direct",
+      },
     });
 
     this.#task = task;

@@ -9,6 +9,8 @@ import { SendNewsletterWorker } from "./send-newsletter.mjs";
   try {
     const rabbitMQServer = RabbitMqServer.create(RABBIT_MQ_URI);
 
+    await rabbitMQServer.start();
+
     const workers = [
       new UserAccountNotificationWorker(
         rabbitMQServer,

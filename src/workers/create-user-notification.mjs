@@ -1,4 +1,4 @@
-import { UserAccountNotificationDTO } from "../services/input/user-account-notification.dto.mjs";
+import { UserAccountNotificationDTO } from "../services/command/user-account-notification.command.mjs";
 import { Worker } from "./protocol/worker.facade.mjs";
 
 export class UserAccountNotificationWorker extends Worker {
@@ -10,7 +10,10 @@ export class UserAccountNotificationWorker extends Worker {
         bind_key: "account",
       },
       consume_rate: 1,
-      exchange: "mailer.exchange",
+      exchange: {
+        name: "mailer.exchange",
+        type: "direct",
+      },
     });
 
     this.#task = task;
